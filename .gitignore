@@ -2,3 +2,6 @@
 ant.conf
 env
 antbot.egg-info
+dist
+antbot/__pycache__
+
