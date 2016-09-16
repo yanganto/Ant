@@ -1,23 +1,5 @@
-AntBot
----
-a slack bot doing simple script jobs
+The MIT License (MIT)
 
-please set up following parameters in config file as ant.conf (in working folder or in ~/.config);
-or set up as environment parameters: 
-- BOT_ID (you can skip if BOT_NAME is set)
-- BOT_NAME
-- SLACK_BOT_TOKEN (api key provided by slack)
-- SCRIPTS_FOLDER (script job you want to provide)
-- LOG_FILE
-
-Environment
----
-- python 3.5
-- slackclient 
-
-
-MIT Licence
----
 Copyright (c) 2016 Antonio Yang (yanganto) Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.

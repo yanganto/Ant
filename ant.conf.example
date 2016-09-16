@@ -1,0 +1,17 @@
+## This is an example for ant bot config
+## copy the ant.config.example to ant.config in the current folder or in ~/.config
+##
+
+## Please specify the BOT_ID or the BOT NAME (required)
+BOT_ID=U1111111B
+# BOT_NAME=ant
+
+## Please specify the Slack bot api key (required)
+SLACK_BOT_TOKEN=xoxb-00000000000-xxxxxxxxxxxxxxxxxxxxxxxx
+
+
+## Please specify the use the command folder or use the current folder
+# SCRIPTS_FOLDER=/tmp/scripts
+
+## Please specify the logfile
+# LOG_FILE=/var/log/ant.log

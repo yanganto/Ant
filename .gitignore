@@ -1,1 +1,4 @@
 .idea
+ant.conf
+env
+antbot.egg-info
