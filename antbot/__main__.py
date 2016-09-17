@@ -1,7 +1,3 @@
-"""
-    A slack chat bot doing  scripts
-"""
-
 import time
 import subprocess
 import logging
@@ -9,11 +5,11 @@ from os import path
 
 from slackclient import SlackClient
 
-from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, COMMANDS, LOG_FILE
+from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, COMMANDS, LOG_FILE, __doc__, OUTPUT
 
-AT_BOT = "<@" + BOT_ID + ">:"
+AT_BOT = "<@" + BOT_ID + ">:" if BOT_ID else ""
 
-slack_client = SlackClient(SLACK_BOT_TOKEN)
+slack_client = SlackClient(SLACK_BOT_TOKEN) if SLACK_BOT_TOKEN else None
 
 
 def handle_command(command, channel):
@@ -22,7 +18,7 @@ def handle_command(command, channel):
     """
     cmd = command.strip().split()[0]
     if cmd.lower().startswith('help'):
-        response = "I can execute following scripts, please specify\n" + ", ".join(COMMANDS)
+        response = "I can execute following scripts, please specify\n" + ", ".join(['*' + c + '*' for c in COMMANDS])
         slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
 
     elif cmd in COMMANDS:
@@ -30,20 +26,22 @@ def handle_command(command, channel):
         logging.info(response)
         slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
 
-        ps = subprocess.run(path.join(SCRIPTS_FOLDER, command.strip()))
+        ps = subprocess.run(path.join(SCRIPTS_FOLDER, command.strip()), stderr=subprocess.STDOUT)
         if ps.returncode is not 0:
             response = command + ' raise exception: ' + str(ps.returncode)
             slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
             if ps.stdout:
                 logging.error(response + " " + ps.stdout)
-            if ps.stderr:
-                logging.error(response + " " + ps.stderr)
         else:
             logging.info("STDOUT: " + ps.stdout)
+
+        if OUTPUT:
+            slack_client.api_call("chat.postMessage", channel=channel, text=ps.stdout, as_user=True)
+
     else:
         slack_client.api_call("chat.postMessage", channel=channel, as_user=True,
-                              text="I don't know what you say, type *help* to know the commands")
-        logging.info("UNHANDLE: " + command)
+                              text="I don't know what you say, type *help* to know the commands I can use")
+        logging.info("UNKNOWN: " + command)
 
 
 def parse_slack_output(slack_rtm_output):
@@ -64,15 +62,48 @@ def main():
     READ_WEBSOCKET_DELAY = 1
     logging.basicConfig(level=logging.DEBUG, format='LINE %(lineno)-4d  %(levelname)-8s %(message)s',
                         datefmt='%m-%d %H:%M', filename=LOG_FILE, filemode='w')
-    if slack_client.rtm_connect():
-        print("StarterBot connected and running!")
+    if slack_client and slack_client.rtm_connect():
+        logging.info("Chat bot connected and running!")
         while True:
             command, channel = parse_slack_output(slack_client.rtm_read())
             if command and channel:
                 handle_command(command, channel)
             time.sleep(READ_WEBSOCKET_DELAY)
-    else:
-        print("Connection failed. Invalid Slack token or bot ID?")
+
+
+def cli():
+    import sys
+    import getopt
+    import shutil
+    from os import getcwd
+    argv = sys.argv[1:]
+
+    try:
+        opts, args = getopt.getopt(argv, "ch", ["copy", "help"])
+    except getopt.GetoptError as e:
+        print(__doc__)
+        sys.exit("invalid option: " + str(e))
+
+    for o, a in opts:
+        if o in ('-h', '--help'):
+            print(__doc__)
+            sys.exit(0)
+        if o in ('-c', '--copy'):
+            pkg_folder = path.dirname(path.abspath(__file__))
+            shutil.copy(path.join(pkg_folder, 'ant.conf.example'), path.join(getcwd(), 'ant.conf'))
+            print('please configure ' + path.join(getcwd(), 'ant.conf'))
+            sys.exit(0)
+
+    if not slack_client:
+        print("""
+!!! Lack configure file
+type following command to copy a config file to current folder
+
+antbot -c
+""")
+        sys.exit(1)
+
+    main()
 
 if __name__ == "__main__":
-    main()
+    cli()

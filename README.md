@@ -2,6 +2,14 @@ AntBot
 ---
 a slack bot doing simple script jobs
 
+Usage
+---
+- `antbot -c` to copy the config file to current folder
+- `antbot` to run the bot
+- `antbot -h` for help
+
+Config
+---
 please set up following parameters in config file as ant.conf (in working folder or in ~/.config);
 or set up as environment parameters: 
 - BOT_ID (you can skip if BOT_NAME is set)
@@ -14,6 +22,16 @@ Environment
 ---
 - python 3.5
 - slackclient 
+
+Change Log
+---
+Version 0.0.1
+- basic bot
+
+Version 0.0.3
+- command line document
+- copy config example
+- show command execution output to slack (optional)
 
 
 MIT Licence

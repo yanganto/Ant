@@ -15,3 +15,6 @@ SLACK_BOT_TOKEN=xoxb-00000000000-xxxxxxxxxxxxxxxxxxxxxxxx
 
 ## Please specify the logfile
 # LOG_FILE=/var/log/ant.log
+
+## Uncomment this if your want show execution output response to slack
+# OUTPUT=True

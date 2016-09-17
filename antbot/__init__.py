@@ -1,9 +1,28 @@
-"""
-    Generate the configs
+"""A slack chat bot doing scripts on the server
+---
+
+NAME
+    antbot
+
+SYNOPSIS
+    antbot [OPTION]
+
+DESCRIPTION
+    -h, --help
+        show usage
+
+    -c, --copy
+        copy config file to current folder
+
+COPYRIGHT
+    MIT Licence
+
+SOURCE
+    https://github.com/yanganto/Ant
+
 """
 
 from os import environ, path, getcwd, walk
-import platform
 
 from slackclient import SlackClient
 
@@ -11,10 +30,8 @@ BOT_ID = None
 SLACK_BOT_TOKEN = None
 SCRIPTS_FOLDER = None
 BOT_NAME = None
-if platform.system() == 'Windows':
-    LOG_FILE = '/'
-else:
-    LOG_FILE = '/var/log/ant.log'
+LOG_FILE = None
+OUTPUT = False
 COMMANDS = list()
 
 _config_file_path = None
@@ -41,13 +58,15 @@ if _config_file_path:
                 BOT_NAME = line.split('=')[1].strip()
             if var == 'LOG_FILE':
                 LOG_FILE = line.split('=')[1].strip()
+            if var == 'OUTPUT':
+                OUTPUT = line.split('=')[1].strip().lower() == 'true'
 else:
     BOT_ID = environ.get('BOT_ID')
     SLACK_BOT_TOKEN = environ.get('SLACK_BOT_TOKEN')
     SCRIPTS_FOLDER = environ.get("SCRIPTS_FOLDER")
 
-if not SLACK_BOT_TOKEN:
-    raise EnvironmentError('Lack of API TOKEN')
+# if not SLACK_BOT_TOKEN:
+#     raise EnvironmentError('Lack of API TOKEN')
 
 if not BOT_ID and BOT_NAME:
     slack_client = SlackClient(SLACK_BOT_TOKEN)
@@ -59,8 +78,8 @@ if not BOT_ID and BOT_NAME:
             if 'name' in user and user.get('name') == BOT_NAME:
                 BOT_ID = user.get('id')
 
-if not BOT_ID:
-    raise EnvironmentError('Lack of BOT ID')
+# if not BOT_ID:
+#     raise EnvironmentError('Lack of BOT ID')
 
 if not SCRIPTS_FOLDER:
     SCRIPTS_FOLDER = getcwd()
