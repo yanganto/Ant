@@ -28,7 +28,9 @@ or set up as environment parameters:
 - SLACK_BOT_TOKEN (api key provided by slack)
 - SCRIPTS_FOLDER (script job you want to provide, default is current folder)
 
-**Other not parameters can be set in config file**
+Following parameters can be set in config file:
+- OUTPUT - return scripts execution output back to slack
+- ENCODING - specify the encoding of stdout
 
 Environment
 ---
