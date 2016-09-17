@@ -18,3 +18,7 @@ SLACK_BOT_TOKEN=xoxb-00000000000-xxxxxxxxxxxxxxxxxxxxxxxx
 
 ## Uncomment this if your want show execution output response to slack
 # OUTPUT=True
+
+## The encoding of STDOUT, default is utf-8
+# ENCODING=ascii
+# ENCODING=utf-8

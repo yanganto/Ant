@@ -3,13 +3,15 @@ from setuptools import find_packages, setup
 setup(
     name="antbot",
     packages=find_packages(),
-    version="0.0.3",
+    install_requires=['slackclient'],
+    version="0.0.6",
     description="A slack chat bot doing scripts on the server",
     author="yanganto",
     author_email="yanganto@gmail.com",
     url="https://github.com/yanganto/Ant",
     keywords=["slack", "bot"],
     download_url="",
+    license="MIT",
     include_package_data=True,
     package_data={
         'antbot': ['ant.conf.example'],
@@ -24,10 +26,11 @@ setup(
         'antbot = antbot.__main__:cli',
     ]},
     long_description="""\
-AntBot
+AntBot - a slack chat bot execute simple script jobs
 ---
-a slack chat bot doing simple script jobs
-This version requires Python 3.5
+a slack bot can execute commands by slack chat room ( @bot_name: command ),
+wherein these commands are specified in a folder.
 
+This version requires Python 3.5
 """
 )

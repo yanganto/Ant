@@ -5,7 +5,7 @@ from os import path
 
 from slackclient import SlackClient
 
-from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, COMMANDS, LOG_FILE, __doc__, OUTPUT
+from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, COMMANDS, LOG_FILE, __doc__, OUTPUT, ENCODING
 
 AT_BOT = "<@" + BOT_ID + ">:" if BOT_ID else ""
 
@@ -26,17 +26,20 @@ def handle_command(command, channel):
         logging.info(response)
         slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
 
-        ps = subprocess.run(path.join(SCRIPTS_FOLDER, command.strip()), stderr=subprocess.STDOUT)
+        ps = subprocess.run(path.join(SCRIPTS_FOLDER, command.strip()), stderr=subprocess.STDOUT,
+                            stdout=subprocess.PIPE)
         if ps.returncode is not 0:
             response = command + ' raise exception: ' + str(ps.returncode)
             slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
-            if ps.stdout:
-                logging.error(response + " " + ps.stdout)
+            logging.error(response + " " + ps.stdout.decode(ENCODING, 'ignore'))
         else:
-            logging.info("STDOUT: " + ps.stdout)
+            logging.info("STDOUT: " + ps.stdout.decode(ENCODING, 'ignore'))
 
         if OUTPUT:
-            slack_client.api_call("chat.postMessage", channel=channel, text=ps.stdout, as_user=True)
+            slack_client.api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'),
+                                  as_user=True)
+        else:
+            slack_client.api_call("chat.postMessage", channel=channel, text="Complete", as_user=True)
 
     else:
         slack_client.api_call("chat.postMessage", channel=channel, as_user=True,
@@ -96,10 +99,9 @@ def cli():
 
     if not slack_client:
         print("""
-!!! Lack configure file
+!!! Configure file is missing or improper
 type following command to copy a config file to current folder
-
-antbot -c
+$ antbot -c
 """)
         sys.exit(1)
 
