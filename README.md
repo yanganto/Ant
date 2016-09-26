@@ -39,20 +39,23 @@ Environment
 
 Change Log
 ---
-Version 0.0.1
-- basic bot
+Version 0.0.7
+- Passing arguments to commands
+
+Version 0.0.6
+- fix the requirement
+
+Version 0.0.4
+- fix the bug on STDOUT encoding
+- Parameter patching rull ./ant.conf > ~/.ant.conf > environment parameters
 
 Version 0.0.3
 - command line document
 - copy config example
 - show command execution output to slack (optional)
 
-Version 0.0.4
-- fix the bug on STDOUT encoding
-- Parameter patching rull ./ant.conf > ~/.ant.conf > environment parameters
-
-Version 0.0.6
-- fix the requirement
+Version 0.0.1
+- basic bot
 
 
 MIT Licence
