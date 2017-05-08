@@ -4,7 +4,7 @@ setup(
     name="antbot",
     packages=find_packages(),
     install_requires=['slackclient'],
-    version="0.0.7",
+    version="0.0.9",
     description="A slack chat bot doing scripts on the server",
     author="yanganto",
     author_email="yanganto@gmail.com",
@@ -19,6 +19,7 @@ setup(
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3 :: Only",
         "Topic :: Communications :: Chat"
     ],
@@ -31,6 +32,6 @@ AntBot - a slack chat bot execute simple script jobs
 a slack bot can execute commands by slack chat room ( @bot_name: command ),
 wherein these commands are specified in a folder.
 
-This version requires Python 3.5
+This version requires Python 3.5+
 """
 )

@@ -36,6 +36,7 @@ LOG_FILE = None
 OUTPUT = False
 ENCODING = 'utf-8'
 COMMANDS = list()
+DEBUG_CHANNEL = ""
 
 # loading essential parameter from environment
 if environ.get('BOT_ID'):
@@ -74,6 +75,8 @@ if _config_file_path:
                 OUTPUT = line.split('=')[1].strip().lower() == 'true'
             if var == 'ENCODING':
                 ENCODING = line.split('=')[1].strip()
+            if var == 'DEBUG_CHANNEL':
+                DEBUG_CHANNEL = line.split('=')[1].strip()
 
 # load config from current folder
 if path.isfile('./ant.conf'):
@@ -100,6 +103,8 @@ if _config_file_path:
                 OUTPUT = line.split('=')[1].strip().lower() == 'true'
             if var == 'ENCODING':
                 ENCODING = line.split('=')[1].strip()
+            if var == 'DEBUG_CHANNEL':
+                DEBUG_CHANNEL = line.split('=')[1].strip()
 
 # get BOT ID if not provide
 if not BOT_ID and BOT_NAME:
@@ -111,6 +116,7 @@ if not BOT_ID and BOT_NAME:
         for user in users:
             if 'name' in user and user.get('name') == BOT_NAME:
                 BOT_ID = user.get('id')
+
 # script folder fall back as pwd
 if not SCRIPTS_FOLDER:
     SCRIPTS_FOLDER = getcwd()

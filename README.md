@@ -31,14 +31,21 @@ or set up as environment parameters:
 Following parameters can be set in config file:
 - OUTPUT - return scripts execution output back to slack
 - ENCODING - specify the encoding of stdout
+- DEBUG_CHANNEL - specify the channel always show the execution output
 
 Environment
 ---
-- python 3.5
+- python 3.5+
 - slackclient 
 
 Change Log
 ---
+Version 0.0.9
+- add debug channel
+
+Version 0.0.8
+- Case sensitive 
+
 Version 0.0.7
 - Passing arguments to commands
 

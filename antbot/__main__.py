@@ -5,7 +5,7 @@ from os import path
 
 from slackclient import SlackClient
 
-from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, COMMANDS, LOG_FILE, __doc__, OUTPUT, ENCODING
+from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, COMMANDS, LOG_FILE, __doc__, OUTPUT, ENCODING, DEBUG_CHANNEL
 
 AT_BOT = "<@" + BOT_ID + ">:" if BOT_ID else ""
 
@@ -43,6 +43,10 @@ def handle_command(command, channel):
         else:
             slack_client.api_call("chat.postMessage", channel=channel, text="Complete", as_user=True)
 
+        if DEBUG_CHANNEL:
+            slack_client.api_call("chat.postMessage", channel=DEBUG_CHANNEL, 
+                    text=ps.stdout.decode(ENCODING, 'ignore'), as_user=True)
+
     else:
         slack_client.api_call("chat.postMessage", channel=channel, as_user=True,
                               text="I don't know what you say, type *help* to know the commands I can use")
@@ -59,7 +63,7 @@ def parse_slack_output(slack_rtm_output):
     if output_list and len(output_list) > 0:
         for output in output_list:
             if output and 'text' in output and AT_BOT in output['text']:
-                return output['text'].split(AT_BOT)[1].strip().lower(), output['channel']
+                return output['text'].split(AT_BOT)[1].strip(), output['channel']
     return None, None
 
 
@@ -84,7 +88,7 @@ def cli():
     argv = sys.argv[1:]
 
     try:
-        opts, args = getopt.getopt(argv, "ch", ["copy", "help"])
+        opts, args = getopt.getopt(argv, "chv", ["copy", "help", "verbose"])
     except getopt.GetoptError as e:
         print(__doc__)
         sys.exit("invalid option: " + str(e))
@@ -98,6 +102,10 @@ def cli():
             shutil.copy(path.join(pkg_folder, 'ant.conf.example'), path.join(getcwd(), 'ant.conf'))
             print('please configure ' + path.join(getcwd(), 'ant.conf'))
             sys.exit(0)
+        if o in ('-v', '--verbose'):
+            logging.getLogger().setLevel(logging.DEBUG)
+            logging.debug('debug mode')
+
 
     if not slack_client:
         print("""
@@ -107,6 +115,7 @@ $ antbot -c
 """)
         sys.exit(1)
 
+    logging.debug('config load')
     main()
 
 if __name__ == "__main__":
