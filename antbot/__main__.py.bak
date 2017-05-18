@@ -100,7 +100,7 @@ def cli():
         if o in ('-c', '--copy'):
             pkg_folder = path.dirname(path.abspath(__file__))
             shutil.copy(path.join(pkg_folder, 'ant.conf.example'), path.join(getcwd(), 'ant.conf'))
-            print(('please configure ' + path.join(getcwd(), 'ant.conf')))
+            print('please configure ' + path.join(getcwd(), 'ant.conf'))
             sys.exit(0)
         if o in ('-v', '--verbose'):
             logging.getLogger().setLevel(logging.DEBUG)
