@@ -23,6 +23,8 @@ SLACK_BOT_TOKEN=xoxb-00000000000-xxxxxxxxxxxxxxxxxxxxxxxx
 # ENCODING=ascii
 # ENCODING=utf-8
 
+## Uncomment this line if you want the caller to be mentioned in the response message
+# MENTION=True
 
 ## The debug channel always show the output
-# DEBUG_CHANNEL=debugChannelName
+#DEBUG_CHANNEL=debugChannelName

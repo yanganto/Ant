@@ -35,6 +35,7 @@ BOT_NAME = None
 LOG_FILE = None
 OUTPUT = False
 ENCODING = 'utf-8'
+MENTION=False
 COMMANDS = list()
 DEBUG_CHANNEL = ""
 
@@ -75,6 +76,8 @@ if _config_file_path:
                 OUTPUT = line.split('=')[1].strip().lower() == 'true'
             if var == 'ENCODING':
                 ENCODING = line.split('=')[1].strip()
+            if var == 'MENTION':
+                MENTION = line.split('=')[1].strip().lower() == 'true'
             if var == 'DEBUG_CHANNEL':
                 DEBUG_CHANNEL = line.split('=')[1].strip()
 
@@ -103,6 +106,8 @@ if _config_file_path:
                 OUTPUT = line.split('=')[1].strip().lower() == 'true'
             if var == 'ENCODING':
                 ENCODING = line.split('=')[1].strip()
+            if var == 'MENTION':
+                MENTION = line.split('=')[1].strip().lower() == 'true'
             if var == 'DEBUG_CHANNEL':
                 DEBUG_CHANNEL = line.split('=')[1].strip()
 
