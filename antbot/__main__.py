@@ -5,14 +5,19 @@ from os import path
 
 from slackclient import SlackClient
 
-from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, COMMANDS, LOG_FILE, __doc__, OUTPUT, ENCODING, DEBUG_CHANNEL
+from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, COMMANDS, LOG_FILE, __doc__, OUTPUT, ENCODING, MENTION, DEBUG_CHANNEL
 
 AT_BOT = "<@" + BOT_ID + ">:" if BOT_ID else ""
 
 slack_client = SlackClient(SLACK_BOT_TOKEN) if SLACK_BOT_TOKEN else None
 
+def slack_api_call(type, channel, text, as_user=True, user=""):
+    message_text = text
+    if MENTION and user:
+        message_text = "<@" + user + "> " + message_text
+    slack_client.api_call(type, channel=channel, text=message_text, as_user=True)
 
-def handle_command(command, channel):
+def handle_command(command, channel, user):
     """
         Receives commands and execute the commands in SCRIPTS_FOLDER
     """
@@ -29,7 +34,7 @@ def handle_command(command, channel):
         command_list = [c for c in command.strip().split() if not c.isspace()]
         command_list[0] = path.join(SCRIPTS_FOLDER, command_list[0])
 
-        ps = subprocess.run(command_list, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+        ps = subprocess.run(command_list, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, shell=True)
         if ps.returncode is not 0:
             response = command + ' raise exception: ' + str(ps.returncode)
             slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
@@ -38,14 +43,13 @@ def handle_command(command, channel):
             logging.info("STDOUT: " + ps.stdout.decode(ENCODING, 'ignore'))
 
         if OUTPUT:
-            slack_client.api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'),
-                                  as_user=True)
+            slack_api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'), as_user=True, user=user)
         else:
-            slack_client.api_call("chat.postMessage", channel=channel, text="Complete", as_user=True)
+            slack_api_call("chat.postMessage", channel=channel, text="Complete", as_user=True, user=user)
 
         if DEBUG_CHANNEL:
-            slack_client.api_call("chat.postMessage", channel=DEBUG_CHANNEL, 
-                    text=ps.stdout.decode(ENCODING, 'ignore'), as_user=True)
+            slack_api_call("chat.postMessage", channel=DEBUG_CHANNEL, text=ps.stdout.decode(ENCODING, 'ignore'),
+                    as_user=True, user=user)
 
     else:
         slack_client.api_call("chat.postMessage", channel=channel, as_user=True,
@@ -63,8 +67,8 @@ def parse_slack_output(slack_rtm_output):
     if output_list and len(output_list) > 0:
         for output in output_list:
             if output and 'text' in output and AT_BOT in output['text']:
-                return output['text'].split(AT_BOT)[1].strip(), output['channel']
-    return None, None
+                return output['text'].split(AT_BOT)[1].strip(), output['channel'], output['user']
+    return None, None, None
 
 
 def main():
@@ -74,9 +78,9 @@ def main():
     if slack_client and slack_client.rtm_connect():
         logging.info("Chat bot connected and running!")
         while True:
-            command, channel = parse_slack_output(slack_client.rtm_read())
+            command, channel, user = parse_slack_output(slack_client.rtm_read())
             if command and channel:
-                handle_command(command, channel)
+                handle_command(command, channel, user)
             time.sleep(READ_WEBSOCKET_DELAY)
 
 
