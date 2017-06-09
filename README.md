@@ -32,6 +32,7 @@ Following parameters can be set in config file:
 - OUTPUT - return scripts execution output back to slack
 - ENCODING - specify the encoding of stdout
 - DEBUG_CHANNEL - specify the channel always show the execution output
+- MENTION - Mention back the original caller (Thanks imrobinized@github)
 
 Environment
 ---
@@ -40,6 +41,9 @@ Environment
 
 Change Log
 ---
+Version 0.1.0
+- mention the caller (optional), set `MENTION=True` in config file
+
 Version 0.0.9
 - add debug channel
 
