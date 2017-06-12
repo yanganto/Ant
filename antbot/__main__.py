@@ -34,7 +34,7 @@ def handle_command(command, channel, user):
         command_list = [c for c in command.strip().split() if not c.isspace()]
         command_list[0] = path.join(SCRIPTS_FOLDER, command_list[0])
 
-        ps = subprocess.run(command_list, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, shell=True)
+        ps = subprocess.run(command_list, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
         if ps.returncode is not 0:
             response = command + ' raise exception: ' + str(ps.returncode)
             slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
