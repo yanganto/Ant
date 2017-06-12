@@ -43,13 +43,14 @@ def handle_command(command, channel, user):
             logging.info("STDOUT: " + ps.stdout.decode(ENCODING, 'ignore'))
 
         if OUTPUT:
-            slack_api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'), as_user=True, user=user)
+            slack_client.api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'),
+                    as_user=True)
         else:
             slack_api_call("chat.postMessage", channel=channel, text="Complete", as_user=True, user=user)
 
         if DEBUG_CHANNEL:
-            slack_api_call("chat.postMessage", channel=DEBUG_CHANNEL, text=ps.stdout.decode(ENCODING, 'ignore'),
-                    as_user=True, user=user)
+            slack_client.api_call("chat.postMessage", channel=DEBUG_CHANNEL, text=ps.stdout.decode(ENCODING, 'ignore'),
+                    as_user=True)
 
     else:
         slack_client.api_call("chat.postMessage", channel=channel, as_user=True,
