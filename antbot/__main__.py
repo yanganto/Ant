@@ -34,7 +34,7 @@ def handle_command(command, channel, user):
         command_list = [c for c in command.strip().split() if not c.isspace()]
         command_list[0] = path.join(SCRIPTS_FOLDER, command_list[0])
 
-        ps = subprocess.run(command_list, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, shell=True)
+        ps = subprocess.run(command_list, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
         if ps.returncode is not 0:
             response = command + ' raise exception: ' + str(ps.returncode)
             slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
@@ -43,13 +43,14 @@ def handle_command(command, channel, user):
             logging.info("STDOUT: " + ps.stdout.decode(ENCODING, 'ignore'))
 
         if OUTPUT:
-            slack_api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'), as_user=True, user=user)
+            slack_client.api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'),
+                    as_user=True)
         else:
             slack_api_call("chat.postMessage", channel=channel, text="Complete", as_user=True, user=user)
 
         if DEBUG_CHANNEL:
-            slack_api_call("chat.postMessage", channel=DEBUG_CHANNEL, text=ps.stdout.decode(ENCODING, 'ignore'),
-                    as_user=True, user=user)
+            slack_client.api_call("chat.postMessage", channel=DEBUG_CHANNEL, text=ps.stdout.decode(ENCODING, 'ignore'),
+                    as_user=True)
 
     else:
         slack_client.api_call("chat.postMessage", channel=channel, as_user=True,
