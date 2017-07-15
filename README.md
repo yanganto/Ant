@@ -42,9 +42,10 @@ Environment
 Change Log
 ---
 
-Version 0.1.0, 0.1.1
+Version 0.1.0, 0.1.1, 0.1.2
 - mention the caller (optional), set `MENTION=True` in config file
 - remove the mention in debug chanel (0.1.1)
+- mention with orignal command
 
 Version 0.0.9
 - add debug channel
