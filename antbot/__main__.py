@@ -46,7 +46,8 @@ def handle_command(command, channel, user):
             slack_client.api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'),
                     as_user=True)
         else:
-            slack_api_call("chat.postMessage", channel=channel, text="Complete", as_user=True, user=user)
+            text = command + " Complete"
+            slack_api_call("chat.postMessage", channel=channel, text=text, as_user=True, user=user)
 
         if DEBUG_CHANNEL:
             slack_client.api_call("chat.postMessage", channel=DEBUG_CHANNEL, text=ps.stdout.decode(ENCODING, 'ignore'),
