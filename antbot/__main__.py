@@ -5,9 +5,9 @@ from os import path
 
 from slackclient import SlackClient
 
-from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, COMMANDS, LOG_FILE, __doc__, OUTPUT, ENCODING, MENTION, DEBUG_CHANNEL
+from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, COMMANDS, LOG_FILE, __doc__, OUTPUT, ENCODING, MENTION, DEBUG_CHANNEL, DEFAULT_SCRIPT 
 
-AT_BOT = "<@" + BOT_ID + ">:" if BOT_ID else ""
+AT_BOT = "<@" + BOT_ID + ">" if BOT_ID else ""
 
 slack_client = SlackClient(SLACK_BOT_TOKEN) if SLACK_BOT_TOKEN else None
 
@@ -33,29 +33,33 @@ def handle_command(command, channel, user):
 
         command_list = [c for c in command.strip().split() if not c.isspace()]
         command_list[0] = path.join(SCRIPTS_FOLDER, command_list[0])
+        run_command_and_return(command_list, command, channel, user)
 
-        ps = subprocess.run(command_list, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
-        if ps.returncode is not 0:
-            response = command + ' raise exception: ' + str(ps.returncode)
-            slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
-            logging.error(response + " " + ps.stdout.decode(ENCODING, 'ignore'))
-        else:
-            logging.info("STDOUT: " + ps.stdout.decode(ENCODING, 'ignore'))
-
-        if OUTPUT:
-            slack_client.api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'),
-                    as_user=True)
-        else:
-            slack_api_call("chat.postMessage", channel=channel, text="Complete", as_user=True, user=user)
-
-        if DEBUG_CHANNEL:
-            slack_client.api_call("chat.postMessage", channel=DEBUG_CHANNEL, text=ps.stdout.decode(ENCODING, 'ignore'),
-                    as_user=True)
-
+    elif DEFAULT_SCRIPT:
+        command_list = [c for c in command.strip().split() if not c.isspace()]
+        run_command_and_return([DEFAULT_SCRIPT] + command_list, command, channel, user)
     else:
-        slack_client.api_call("chat.postMessage", channel=channel, as_user=True,
-                              text="I don't know what you say, type *help* to know the commands I can use")
-        logging.info("UNKNOWN: " + command)
+        slack_client.api_call("chat.postMessage", channel=channel, as_user=True, text="I don't know what you say, type *help* to know the commands I can use")
+        logging.info("UNHANDLE COMMAND: " + command)
+
+def run_command_and_return(command_list, command, channel, user):
+    ps = subprocess.run(command_list, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+    if ps.returncode is not 0:
+        response = command + ' raise exception: ' + str(ps.returncode)
+        slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
+        logging.error(response + " " + ps.stdout.decode(ENCODING, 'ignore'))
+    else:
+        logging.info("STDOUT: " + ps.stdout.decode(ENCODING, 'ignore'))
+
+    if OUTPUT:
+        slack_client.api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'),
+                as_user=True)
+    else:
+        slack_api_call("chat.postMessage", channel=channel, text="Complete", as_user=True, user=user)
+
+    if DEBUG_CHANNEL:
+        slack_client.api_call("chat.postMessage", channel=DEBUG_CHANNEL, text=ps.stdout.decode(ENCODING, 'ignore'),
+                as_user=True)
 
 
 def parse_slack_output(slack_rtm_output):
@@ -67,7 +71,7 @@ def parse_slack_output(slack_rtm_output):
     output_list = slack_rtm_output
     if output_list and len(output_list) > 0:
         for output in output_list:
-            if output and 'text' in output and AT_BOT in output['text']:
+            if output and 'text' in output and output['text'].startswith(AT_BOT):
                 return output['text'].split(AT_BOT)[1].strip(), output['channel'], output['user']
     return None, None, None
 
@@ -114,8 +118,9 @@ def cli():
 
     if not slack_client:
         print("""
-!!! Configure file is missing or improper
-type following command to copy a config file to current folder
+Configure file is missing or improper
+type following command to copy a config file to current folder, or in ~/.config
+
 $ antbot -c
 """)
         sys.exit(1)

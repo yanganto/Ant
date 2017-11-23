@@ -31,6 +31,7 @@ from slackclient import SlackClient
 BOT_ID = None
 SLACK_BOT_TOKEN = None
 SCRIPTS_FOLDER = None
+DEFAULT_SCRIPT=None
 BOT_NAME = None
 LOG_FILE = None
 OUTPUT = False
@@ -68,6 +69,8 @@ if _config_file_path:
                 SLACK_BOT_TOKEN = line.split('=')[1].strip()
             if var == 'SCRIPTS_FOLDER':
                 SCRIPTS_FOLDER = line.split('=')[1].strip()
+            if var == 'DEFAULT_SCRIPT':
+                DEFAULT_SCRIPT= line.split('=')[1].strip()
             if var == 'BOT_NAME':
                 BOT_NAME = line.split('=')[1].strip()
             if var == 'LOG_FILE':
@@ -98,6 +101,8 @@ if _config_file_path:
                 SLACK_BOT_TOKEN = line.split('=')[1].strip()
             if var == 'SCRIPTS_FOLDER':
                 SCRIPTS_FOLDER = line.split('=')[1].strip()
+            if var == 'DEFAULT_SCRIPT':
+                DEFAULT_SCRIPT= line.split('=')[1].strip()
             if var == 'BOT_NAME':
                 BOT_NAME = line.split('=')[1].strip()
             if var == 'LOG_FILE':

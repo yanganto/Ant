@@ -13,6 +13,9 @@ SLACK_BOT_TOKEN=xoxb-00000000000-xxxxxxxxxxxxxxxxxxxxxxxx
 ## Please specify the use the command folder or use the current folder
 # SCRIPTS_FOLDER=/tmp/scripts
 
+# specify a default script to handle the known command
+# DEFAULT_SCRIPT=/tmp/scripts/default/default.sh
+
 ## Please specify the logfile
 # LOG_FILE=/var/log/ant.log
 

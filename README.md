@@ -1,7 +1,7 @@
 AntBot
 ---
 a slack bot doing simple script jobs
-> a slack bot can execute commands by slack chat room ( @bot_name: command ), 
+> a slack bot can execute commands by slack chat room ( `@bot_name: command` ), 
 > wherein these commands are specified in a folder.
 
 
@@ -24,15 +24,16 @@ Configure
 ---
 please set up at least following parameters in config file as ant.conf (in working folder or in ~/.config);
 or set up as environment parameters: 
-- BOT_ID or BOT_NAME
-- SLACK_BOT_TOKEN (api key provided by slack)
-- SCRIPTS_FOLDER (script job you want to provide, default is current folder)
+- `BOT_ID` or `BOT_NAME`
+- `SLACK_BOT_TOKEN` (api key provided by slack)
+- `SCRIPTS_FOLDER` (script job you want to provide, default is current folder)
+- `DEFAULT_SCRIPT` (handle the unknow command)
 
 Following parameters can be set in config file:
-- OUTPUT - return scripts execution output back to slack
-- ENCODING - specify the encoding of stdout
-- DEBUG_CHANNEL - specify the channel always show the execution output
-- MENTION - Mention back the original caller (Thanks imrobinized@github)
+- `OUTPUT` - return scripts execution output back to slack
+- `ENCODING` - specify the encoding of stdout
+- `DEBUG_CHANNEL` - specify the channel always show the execution output
+- `MENTION` - Mention back the original caller (Thanks imrobinized@github)
 
 Environment
 ---
@@ -41,6 +42,9 @@ Environment
 
 Change Log
 ---
+Version 0.1.2
+- if @botname at the head of chat message, then trigger command
+- use `DEFAULT_SCRIPT` to handle unspecific command
 
 Version 0.1.0, 0.1.1
 - mention the caller (optional), set `MENTION=True` in config file
