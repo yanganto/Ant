@@ -55,7 +55,7 @@ def run_command_and_return(command_list, command, channel, user):
         slack_client.api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'),
                 as_user=True)
     else:
-        slack_api_call("chat.postMessage", channel=channel, text="Complete", as_user=True, user=user)
+        slack_api_call("chat.postMessage", channel=channel, text=command + " Complete", as_user=True, user=user)
 
     if DEBUG_CHANNEL:
         slack_client.api_call("chat.postMessage", channel=DEBUG_CHANNEL, text=ps.stdout.decode(ENCODING, 'ignore'),
