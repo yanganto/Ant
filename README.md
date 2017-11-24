@@ -42,7 +42,7 @@ Environment
 
 Change Log
 ---
-Version 0.1.2
+Version 0.1.3
 - if @botname at the head of chat message, then trigger command
 - use `DEFAULT_SCRIPT` to handle unspecific command
 
