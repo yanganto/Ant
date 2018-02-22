@@ -42,6 +42,11 @@ Environment
 
 Change Log
 ---
+Version 0.1.4
+- change use nameko for microservice
+- use `JOBS_FOLDER` to process regular jobs
+- please specify the `JOBS_CHANNEL` for the regulat jobs output
+
 Version 0.1.3
 - if @botname at the head of chat message, then trigger command
 - use `DEFAULT_SCRIPT` to handle unspecific command

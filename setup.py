@@ -4,7 +4,7 @@ setup(
     name="antbot",
     packages=find_packages(),
     install_requires=['slackclient'],
-    version="0.1.3",
+    version="0.1.4",
     description="A slack chat bot doing scripts on the server",
     author="yanganto",
     author_email="yanganto@gmail.com",

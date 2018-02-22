@@ -31,6 +31,8 @@ from slackclient import SlackClient
 BOT_ID = None
 SLACK_BOT_TOKEN = None
 SCRIPTS_FOLDER = None
+JOBS_FOLDER = None
+JOBS_CHANNEL = "" 
 DEFAULT_SCRIPT=None
 BOT_NAME = None
 LOG_FILE = None
@@ -49,6 +51,10 @@ if environ.get('BOT_NAME'):
     BOT_NAME = environ.get('BOT_NAME')
 if environ.get("SCRIPTS_FOLDER"):
     SCRIPTS_FOLDER = environ.get("SCRIPTS_FOLDER")
+if environ.get("JOBS_FOLDER"):
+    SCRIPTS_FOLDER = environ.get("JOBS_FOLDER")
+if environ.get("JOBS_CHANNEL"):
+    JOBS_CHANNEL = environ.get("JOBS_CHANNEL")
 
 _config_file_path = None
 
@@ -69,6 +75,10 @@ if _config_file_path:
                 SLACK_BOT_TOKEN = line.split('=')[1].strip()
             if var == 'SCRIPTS_FOLDER':
                 SCRIPTS_FOLDER = line.split('=')[1].strip()
+            if var == 'JOBS_FOLDER':
+                JOBS_FOLDER = line.split('=')[1].strip()
+            if var == 'JOBS_CHANNEL':
+                JOBS_CHANNEL = line.split('=')[1].strip()
             if var == 'DEFAULT_SCRIPT':
                 DEFAULT_SCRIPT= line.split('=')[1].strip()
             if var == 'BOT_NAME':
@@ -101,6 +111,10 @@ if _config_file_path:
                 SLACK_BOT_TOKEN = line.split('=')[1].strip()
             if var == 'SCRIPTS_FOLDER':
                 SCRIPTS_FOLDER = line.split('=')[1].strip()
+            if var == 'JOBS_FOLDER':
+                JOBS_FOLDER = line.split('=')[1].strip()
+            if var == 'JOBS_CHANNEL':
+                JOBS_CHANNEL = line.split('=')[1].strip()
             if var == 'DEFAULT_SCRIPT':
                 DEFAULT_SCRIPT= line.split('=')[1].strip()
             if var == 'BOT_NAME':

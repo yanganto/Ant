@@ -1,13 +1,16 @@
-import time
 import subprocess
 import logging
-from os import path
+from os import path, walk
+from datetime import datetime
 
 from slackclient import SlackClient
+from nameko.timer import timer
+from nameko.runners import ServiceRunner
 
-from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, COMMANDS, LOG_FILE, __doc__, OUTPUT, ENCODING, MENTION, DEBUG_CHANNEL, DEFAULT_SCRIPT 
+from antbot import SLACK_BOT_TOKEN, BOT_ID, SCRIPTS_FOLDER, JOBS_FOLDER, COMMANDS, LOG_FILE, __doc__, OUTPUT, ENCODING, MENTION, DEBUG_CHANNEL, DEFAULT_SCRIPT, JOBS_CHANNEL
 
 AT_BOT = "<@" + BOT_ID + ">" if BOT_ID else ""
+READ_WEBSOCKET_DELAY = 1
 
 slack_client = SlackClient(SLACK_BOT_TOKEN) if SLACK_BOT_TOKEN else None
 
@@ -42,7 +45,7 @@ def handle_command(command, channel, user):
         slack_client.api_call("chat.postMessage", channel=channel, as_user=True, text="I don't know what you say, type *help* to know the commands I can use")
         logging.info("UNHANDLE COMMAND: " + command)
 
-def run_command_and_return(command_list, command, channel, user):
+def run_command_and_return(command_list, command, channel, user="", output=False):
     ps = subprocess.run(command_list, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
     if ps.returncode is not 0:
         response = command + ' raise exception: ' + str(ps.returncode)
@@ -51,7 +54,7 @@ def run_command_and_return(command_list, command, channel, user):
     else:
         logging.info("STDOUT: " + ps.stdout.decode(ENCODING, 'ignore'))
 
-    if OUTPUT:
+    if OUTPUT or output:
         slack_client.api_call("chat.postMessage", channel=channel, text=ps.stdout.decode(ENCODING, 'ignore'),
                 as_user=True)
     else:
@@ -75,18 +78,44 @@ def parse_slack_output(slack_rtm_output):
                 return output['text'].split(AT_BOT)[1].strip(), output['channel'], output['user']
     return None, None, None
 
-
-def main():
-    READ_WEBSOCKET_DELAY = 1
+class Worker(object):
+    name = "bot_worker"
     logging.basicConfig(level=logging.DEBUG, format='LINE %(lineno)-4d  %(levelname)-8s %(message)s',
                         datefmt='%m-%d %H:%M', filename=LOG_FILE, filemode='w')
     if slack_client and slack_client.rtm_connect():
         logging.info("Chat bot connected and running!")
-        while True:
-            command, channel, user = parse_slack_output(slack_client.rtm_read())
-            if command and channel:
-                handle_command(command, channel, user)
-            time.sleep(READ_WEBSOCKET_DELAY)
+
+    @timer(interval=READ_WEBSOCKET_DELAY)
+    def command_working_proccesser(self):
+        command, channel, user = parse_slack_output(slack_client.rtm_read())
+        if command and channel:
+            handle_command(command, channel, user)
+
+    @timer(interval=60)
+    def regular_job_processer(self):
+        if JOBS_FOLDER and JOBS_CHANNEL:
+            for dirpath, _, commands in walk(JOBS_FOLDER):
+                if commands and datetime.now().minute % int(path.basename(dirpath)) == 0:
+                    for command in commands:
+                        print(dirpath, _, command)
+                        print(datetime.now().minute, dirpath, path.basename(dirpath))
+                        response = "executing " + command
+                        logging.info(response)
+                        slack_client.api_call("chat.postMessage", channel=JOBS_CHANNEL, text=response, as_user=True)
+
+                        command_list = [c for c in command.strip().split() if not c.isspace()]
+                        command_list[0] = path.join(dirpath, command_list[0])
+                        run_command_and_return(command_list, command, JOBS_CHANNEL, output=True)
+
+def main():
+    runner = ServiceRunner(config={})
+    runner.add_service(Worker)
+    runner.start()
+    try:
+        runner.wait()
+    except KeyboardInterrupt:
+        runner.stop()
+    pass
 
 
 def cli():
@@ -122,6 +151,11 @@ Configure file is missing or improper
 type following command to copy a config file to current folder, or in ~/.config
 
 $ antbot -c
+
+or see the usage
+
+$ antbot -h 
+
 """)
         sys.exit(1)
 

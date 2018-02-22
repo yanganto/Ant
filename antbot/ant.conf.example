@@ -13,6 +13,19 @@ SLACK_BOT_TOKEN=xoxb-00000000000-xxxxxxxxxxxxxxxxxxxxxxxx
 ## Please specify the use the command folder or use the current folder
 # SCRIPTS_FOLDER=/tmp/scripts
 
+## Please specify the use the regular job folder or use the current folder
+# 
+# JOBS_FOLDER=/tmp/jobs
+# JOBS_CHANNEL=jobsOutputChannelName
+# 
+# please set the regular script into miniutes 
+# for example, do something in every 5 min:
+# /tmp/jobs/5/do_something
+# 
+# for example, do something in every hour:
+# /tmp/jobs/60/do_something
+
+
 # specify a default script to handle the known command
 # DEFAULT_SCRIPT=/tmp/scripts/default/default.sh
 
