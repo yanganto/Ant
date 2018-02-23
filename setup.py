@@ -3,8 +3,8 @@ from setuptools import find_packages, setup
 setup(
     name="antbot",
     packages=find_packages(),
-    install_requires=['slackclient'],
-    version="0.1.4",
+    install_requires=['slackclient', 'nameko'],
+    version="0.1.5",
     description="A slack chat bot doing scripts on the server",
     author="yanganto",
     author_email="yanganto@gmail.com",

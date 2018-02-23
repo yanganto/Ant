@@ -42,6 +42,9 @@ Environment
 
 Change Log
 ---
+Version 0.1.5
+- fix bug on dependancy
+
 Version 0.1.4
 - change use nameko for microservice
 - use `JOBS_FOLDER` to process regular jobs
