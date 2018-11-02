@@ -97,12 +97,6 @@ class Worker(object):
             for dirpath, _, commands in walk(JOBS_FOLDER):
                 if commands and datetime.now().minute % int(path.basename(dirpath)) == 0:
                     for command in commands:
-                        print(dirpath, _, command)
-                        print(datetime.now().minute, dirpath, path.basename(dirpath))
-                        response = "executing " + command
-                        logging.info(response)
-                        slack_client.api_call("chat.postMessage", channel=JOBS_CHANNEL, text=response, as_user=True)
-
                         command_list = [c for c in command.strip().split() if not c.isspace()]
                         command_list[0] = path.join(dirpath, command_list[0])
                         run_command_and_return(command_list, command, JOBS_CHANNEL, output=True)
