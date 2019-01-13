@@ -148,7 +148,7 @@ $ antbot -c
 
 or see the usage
 
-$ antbot -h 
+$ antbot -h
 
 """)
         sys.exit(1)
