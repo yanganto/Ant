@@ -2,7 +2,7 @@ slackclient>=1.0.1
 amqp==1.4.9
 anyjson==0.3.3
 enum-compat==0.0.2
-eventlet==0.31.0
+eventlet==0.35.2
 greenlet==0.4.13
 kombu==3.0.37
 mock==2.0.0
